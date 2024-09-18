@@ -1,0 +1,10 @@
+<div>
+  <input
+    type="number"
+    [(ngModel)]="recipeId"
+    (ngModelChange)="getRecipe($event)"
+  />
+  {{ recipe | json }}
+</div>
+
+<router-outlet />

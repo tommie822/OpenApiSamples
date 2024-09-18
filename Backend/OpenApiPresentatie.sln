@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Receptenboek.API", "Receptenboek.Api\Receptenboek.API.csproj", "{36014E3F-1424-4E20-B787-F1C3B031DD8D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Receptenboek.API.9", "Receptenboek.Api.9\Receptenboek.API.9.csproj", "{A6293F68-1650-4F2D-B9ED-D945900EDEAA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{36014E3F-1424-4E20-B787-F1C3B031DD8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36014E3F-1424-4E20-B787-F1C3B031DD8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36014E3F-1424-4E20-B787-F1C3B031DD8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36014E3F-1424-4E20-B787-F1C3B031DD8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6293F68-1650-4F2D-B9ED-D945900EDEAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6293F68-1650-4F2D-B9ED-D945900EDEAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6293F68-1650-4F2D-B9ED-D945900EDEAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6293F68-1650-4F2D-B9ED-D945900EDEAA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8781D609-41ED-44C2-A4CB-516E0F8CD53E}
+	EndGlobalSection
+EndGlobal

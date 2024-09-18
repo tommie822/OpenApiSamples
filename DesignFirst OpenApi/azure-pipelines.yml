@@ -1,0 +1,15 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - openapi.yml
+
+stages:
+  - template: oas-base-pipeline.yml
+    parameters:
+      SpecificationFilePath: "openapi.yml"
+      NugetPackageName: Luminis.Recipes.Server
+      ClientNugetPackageName: Luminis.Recipes.API
+      NPMPackageName: luminis-recipe-api

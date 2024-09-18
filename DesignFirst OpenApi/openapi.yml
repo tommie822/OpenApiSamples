@@ -1,0 +1,117 @@
+openapi: "3.0.3"
+info:
+  title: Receptenboek API
+  version: "1.2.4"
+  contact:
+    name: Tom Tiggeloven
+    url: "https://linkedin.com/in/tom-tiggeloven"
+    email: tom.tiggeloven@luminis.eu
+servers:
+  - url: https://localhost:7215
+paths:
+  /recipes/{recipeId}:
+    get:
+      operationId: getRecipeById
+      tags:
+        - recipes
+      parameters:
+        - name: recipeId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/recipeResponse"
+        "204":
+          description: No content
+    put:
+      operationId: updateRecipeById
+      tags:
+        - recipes
+      parameters:
+        - name: recipeId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/updateRecipeRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/recipeResponse"
+
+  /recipes:
+    post:
+      operationId: AddRecipe
+      tags:
+        - recipes
+      requestBody:
+        $ref: "#/components/requestBodies/addRecipeRequest"
+      responses:
+        "201":
+          $ref: "#/components/responses/recipeResponse"
+
+components:
+  requestBodies:
+    updateRecipeRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/recipeCreateDto"
+    addRecipeRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/recipeCreateDto"
+  responses:
+    recipeResponse:
+      description: Recipe response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/recipeDto"
+  schemas:
+    recipeDto:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        recipeOwnerId:
+          type: integer
+        ingredients:
+          type: array
+          items:
+            type: string
+        instructions:
+          type: array
+          items:
+            type: string
+    recipeCreateDto:
+      type: object
+      required:
+        - name
+        - recipeOwnerId
+        - ingredients
+        - instructions
+      properties:
+        name:
+          type: string
+        recipeOwnerId:
+          type: integer
+        ingredients:
+          type: array
+          items:
+            type: string
+        instructions:
+          type: array
+          items:
+            type: string

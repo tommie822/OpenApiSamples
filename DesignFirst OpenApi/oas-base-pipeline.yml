@@ -1,0 +1,142 @@
+parameters:
+  - name: BuildConfiguration
+    type: string
+    default: Release
+    values:
+      - Release
+      - Debug
+  - name: GeneratorVersion
+    type: string
+    default: 7.8.0
+  - name: AspNetCoreVersion
+    type: string
+    default: 8.0
+  - name: NgVersion
+    type: string
+    default: 18.2.0
+  - name: PackageAuthor
+    type: string
+    default: TomTiggeloven
+  - name: PublishToFeed
+    type: string
+    default: 5e746d50-0932-4e79-8158-de4fa10688a7/7c44424f-7bd7-4daf-aea7-96a2604a962f
+  - name: SpecificationFilePath
+    type: string
+  - name: NugetPackageName
+    type: string
+  - name: ClientNugetPackageName
+    type: string
+  - name: NPMPackageName
+    type: string
+
+stages:
+  - stage: libraryCreationPublishing
+    jobs:
+      - job: Create_And_Publish_Libraries
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: PowerShell@2
+            displayName: Get version from specification file
+            inputs:
+              targetType: "inline"
+              script: |
+                $oasjson = npx js-yaml ${{parameters.SpecificationFilePath}}
+                $oas = $oasjson | ConvertFrom-Json
+                $specversion = $oas.info.version
+                Write-Host "##vso[task.setvariable variable=apiversion]$specversion"
+                Write-Host "##vso[build.updatebuildnumber]$specversion"
+
+          - script: |
+              npm install -g @openapitools/openapi-generator-cli
+            displayName: "Install Open Api Generator CLI"
+
+          - script: |
+              npx @openapitools/openapi-generator-cli version-manager set ${{parameters.GeneratorVersion}}
+            displayName: "Set Open Api Generator CLI to version ${{parameters.GeneratorVersion}}"
+
+          - script: |
+              npx @openapitools/openapi-generator-cli generate -i ${{parameters.SpecificationFilePath}} -g csharp -o $(Build.SourcesDirectory)/tmp/aspnetcore/ --additional-properties=packageName=${{parameters.ClientNugetPackageName}} --additional-properties=packageVersion=$(apiversion) --additional-properties=packageAuthors=${{parameters.PackageAuthor}}
+            displayName: "Generate .Net Core Client Library"
+
+          - script: |
+              npx @openapitools/openapi-generator-cli generate -i ${{parameters.SpecificationFilePath}} -g aspnetcore -o $(Build.SourcesDirectory)/tmp/aspnetcore/ --additional-properties=useSwashbuckle=false --additional-properties=aspnetCoreVersion=${{parameters.AspNetCoreVersion}} --additional-properties=isLibrary=true --additional-properties=packageName=${{parameters.NugetPackageName}} --additional-properties=operationIsAsync=true --additional-properties=operationResultTask=true --additional-properties=buildTarget=library --additional-properties=packageVersion=$(apiversion) --additional-properties=packageAuthors=${{parameters.PackageAuthor}}
+            displayName: "Generate ASP.Net Core Library"
+
+          - script: |
+              npx @openapitools/openapi-generator-cli generate -i ${{parameters.SpecificationFilePath}} -g typescript-angular -o $(Build.SourcesDirectory)/tmp/typescript/ --additional-properties=npmName=${{parameters.NPMPackageName}} --additional-properties=ngVersion=${{parameters.NgVersion}}
+            displayName: "Generate Angular Client Library"
+
+          - task: DotNetCoreCLI@2
+            displayName: Build .Net Core Client Library
+            inputs:
+              command: "build"
+              projects: "**/${{parameters.ClientNugetPackageName}}.csproj"
+              arguments: "--configuration ${{parameters.BuildConfiguration}}"
+
+          - task: DotNetCoreCLI@2
+            displayName: Build ASP.Net core server Library
+            inputs:
+              command: "build"
+              projects: "**/${{parameters.NugetPackageName}}.csproj"
+              arguments: "--configuration ${{parameters.BuildConfiguration}}"
+
+          - task: DotNetCoreCLI@2
+            displayName: Pack .Net Core Client Library
+            inputs:
+              command: "pack"
+              packagesToPack: "**/${{parameters.ClientNugetPackageName}}.csproj"
+              packDirectory: "$(Build.ArtifactStagingDirectory)/${{parameters.ClientNugetPackageName}}"
+              configuration: ${{parameters.BuildConfiguration}}
+              versioningScheme: "off"
+              includesymbols: true
+              nobuild: true
+
+          - task: DotNetCoreCLI@2
+            displayName: Pack .Net Core server Library
+            inputs:
+              command: "pack"
+              packagesToPack: "**/${{parameters.NugetPackageName}}.csproj"
+              packDirectory: "$(Build.ArtifactStagingDirectory)/${{parameters.NugetPackageName}}"
+              configuration: ${{parameters.BuildConfiguration}}
+              versioningScheme: "off"
+              includesymbols: true
+              nobuild: true
+
+          - task: Npm@1
+            displayName: Install Angular Client Library
+            inputs:
+              command: "custom"
+              workingDir: "$(Build.SourcesDirectory)/tmp/typescript/"
+              customCommand: "install --legacy-peer-dep"
+
+          - task: Npm@1
+            displayName: Build Angular Client Library
+            inputs:
+              command: "custom"
+              workingDir: "$(Build.SourcesDirectory)/tmp/typescript/"
+              customCommand: "run build"
+
+          - task: Npm@1
+            displayName: Publish Angular Client Library to NPM Feed ${{parameters.PublishToFeed}}
+            inputs:
+              command: "publish"
+              workingDir: "$(Build.SourcesDirectory)/tmp/typescript/dist"
+              publishRegistry: "useFeed"
+              publishFeed: ${{parameters.PublishToFeed}}
+
+          - task: NuGetCommand@2
+            displayName: Publish .Net core Client Library to NuGet Feed ${{parameters.PublishToFeed}}
+            inputs:
+              command: "push"
+              packagesToPush: "$(Build.ArtifactStagingDirectory)/${{parameters.ClientNugetPackageName}}/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/${{parameters.ClientNugetPackageName}}/**/*.symbols.nupkg"
+              nuGetFeedType: "internal"
+              publishVstsFeed: ${{parameters.PublishToFeed}}
+
+          - task: NuGetCommand@2
+            displayName: Publish ASP.Net core Library to NuGet Feed ${{parameters.PublishToFeed}}
+            inputs:
+              command: "push"
+              packagesToPush: "$(Build.ArtifactStagingDirectory)/${{parameters.NugetPackageName}}/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/${{parameters.NugetPackageName}}/**/*.symbols.nupkg"
+              nuGetFeedType: "internal"
+              publishVstsFeed: ${{parameters.PublishToFeed}}
