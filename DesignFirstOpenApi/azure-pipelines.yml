@@ -4,7 +4,7 @@ trigger:
       - main
   paths:
     include:
-      - openapi.yml
+      - "DesignFirstOpenApi/openapi.yml"
 
 stages:
   - template: oas-base-pipeline.yml
