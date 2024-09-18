@@ -1,11 +1,10 @@
-using Luminis.Recipes.Server.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace Receptenboek.API.Controllers
 {
     [ApiController]
-    public class ReceptenboekController : RecipesApiController
+    public class ReceptenboekController : ControllerBase
     {
         private static List<Recipe> Recipes =
         [
@@ -23,7 +22,10 @@ namespace Receptenboek.API.Controllers
             _logger = logger;
         }
 
-        public override async Task<IActionResult> GetRecipeById([FromRoute(Name = "recipeId"), Required] int recipeId)
+        [HttpGet("/recipes/{recipeId}", Name = nameof(GetRecipeById))]
+        [ProducesResponseType(typeof(Recipe), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> GetRecipeById([FromRoute(Name = "recipeId"), Required] int recipeId)
         {
             _logger.LogInformation("Getting recipe by id {recipeId}", recipeId);
             var recipe = Recipes.FirstOrDefault(r => r.Id == recipeId);

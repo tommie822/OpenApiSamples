@@ -1,14 +1,12 @@
-using Luminis.Recipes.Server.Controllers;
-using Luminis.Recipes.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 using Receptenboek.API;
-using System.ComponentModel.DataAnnotations;
+using Receptenboek.API.Nine.Dtos;
 
 namespace Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ReceptenboekController : RecipesApiController
+    public class ReceptenboekController : ControllerBase
     {
         private readonly Recipe[] Recipes =
         [
@@ -26,12 +24,11 @@ namespace Controllers
             _logger = logger;
         }
 
-        public override Task<IActionResult> AddRecipe([FromBody] RecipeCreateDto recipeCreateDto)
-        {
-            throw new NotImplementedException();
-        }
 
-        public override async Task<IActionResult> GetRecipeById([FromRoute(Name = "recipeId"), Required] int recipeId)
+        [HttpGet("/recipes/{recipeId}", Name = nameof(GetRecipeById))]
+        [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> GetRecipeById([FromRoute] int recipeId)
         {
             _logger.LogInformation("Getting recipe by id {recipeId}", recipeId);
             var recipe = Recipes.FirstOrDefault(r => r.Id == recipeId);
@@ -40,17 +37,14 @@ namespace Controllers
                 _logger.LogWarning("Recipe with id {recipeId} not found", recipeId);
                 return NoContent();
             }
+
+            await Task.Delay(10);
+
             return Ok(new RecipeDto()
             {
                 Id = recipe.Id,
-                Name = recipe.Name,
-                RecipeOwnerId = recipe.RecipeOwnerId
+                Name = recipe.Name
             });
-        }
-
-        public override Task<IActionResult> UpdateRecipeById([FromRoute(Name = "recipeId"), Required] int recipeId, [FromBody] RecipeCreateDto recipeCreateDto)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Receptenboek.API", "Receptenboek.Api\Receptenboek.API.csproj", "{36014E3F-1424-4E20-B787-F1C3B031DD8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Receptenboek.API.9", "Receptenboek.Api.9\Receptenboek.API.9.csproj", "{A6293F68-1650-4F2D-B9ED-D945900EDEAA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Receptenboek.API.Nine", "Receptenboek.Api.9\Receptenboek.API.Nine.csproj", "{A6293F68-1650-4F2D-B9ED-D945900EDEAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
