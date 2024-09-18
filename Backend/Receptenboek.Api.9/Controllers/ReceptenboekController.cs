@@ -1,12 +1,14 @@
+using Luminis.Recipes.Server.Controllers;
+using Luminis.Recipes.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 using Receptenboek.API;
-using Receptenboek.API.Nine.Dtos;
+using System.ComponentModel.DataAnnotations;
 
 namespace Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ReceptenboekController : ControllerBase
+    public class ReceptenboekController : RecipesApiController
     {
         private readonly Recipe[] Recipes =
         [
@@ -24,11 +26,7 @@ namespace Controllers
             _logger = logger;
         }
 
-
-        [HttpGet("/recipes/{recipeId}", Name = nameof(GetRecipeById))]
-        [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> GetRecipeById([FromRoute] int recipeId)
+        public override async Task<IActionResult> GetRecipeById([FromRoute(Name = "recipeId"), Required] int recipeId)
         {
             _logger.LogInformation("Getting recipe by id {recipeId}", recipeId);
             var recipe = Recipes.FirstOrDefault(r => r.Id == recipeId);

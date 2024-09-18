@@ -48,13 +48,3 @@ components:
           format: int64
         name:
           type: string
-        recipeOwnerId:
-          type: integer
-        ingredients:
-          type: array
-          items:
-            type: string
-        instructions:
-          type: array
-          items:
-            type: string
