@@ -1,7 +1,7 @@
 openapi: "3.0.3"
 info:
   title: Receptenboek API
-  version: "2.1.0"
+  version: "3.0.0"
   contact:
     name: Tom Tiggeloven
     url: "https://linkedin.com/in/tom-tiggeloven"
@@ -12,36 +12,6 @@ paths:
   #add recipe endpoint
   #get user endpoint
   #more recipe properties
-  /users/{userId}:
-    get:
-      operationId: getUserById
-      tags:
-        - users
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        "200":
-          $ref: "#/components/responses/userResponse"
-        "204":
-          description: No content
-  /recipes:
-    post:
-      operationId: addRecipe
-      tags:
-        - recipes
-      requestBody:
-        $ref: "#/components/requestBodies/recipeCreateBody"
-      responses:
-        "201":
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/recipeDto"
   /recipes/{recipeId}:
     get:
       operationId: getRecipeById
@@ -59,12 +29,6 @@ paths:
         "204":
           description: No content
 components:
-  requestBodies:
-    recipeCreateBody:
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/recipeCreateDto"
   responses:
     recipeResponse:
       description: Recipe response
@@ -72,12 +36,6 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/recipeDto"
-    userResponse:
-      description: User response
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/userDto"
   schemas:
     recipeCreateDto:
       type: object

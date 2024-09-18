@@ -10,7 +10,7 @@ namespace Controllers
     [Route("[controller]")]
     public class ReceptenboekController : RecipesApiController
     {
-        private readonly Recipe[] Recipes =
+        private static List<Recipe> Recipes =
         [
             new Recipe { Id = 1, Name = "Pasta", RecipeOwnerId = 03892 },
             new Recipe { Id = 2, Name = "Pizza", RecipeOwnerId = 212 },
