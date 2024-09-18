@@ -7,9 +7,9 @@ trigger:
       - openapi.yml
 
 stages:
-  - template: DesignFirstOpenApi/oas-base-pipeline.yml
+  - template: oas-base-pipeline.yml
     parameters:
-      SpecificationFilePath: "openapi.yml"
+      SpecificationFilePath: "DesignFirstOpenApi/openapi.yml"
       NugetPackageName: Luminis.Recipes.Server
       ClientNugetPackageName: Luminis.Recipes.API
       NPMPackageName: luminis-recipe-api
